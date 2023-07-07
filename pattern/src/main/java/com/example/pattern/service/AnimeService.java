@@ -4,6 +4,7 @@ import com.example.pattern.exception.ResourceNotFoundException;
 import com.example.pattern.model.Anime;
 import com.example.pattern.request.AnimeRequest;
 import com.example.pattern.response.AnimeResponse;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -21,5 +22,8 @@ public interface AnimeService {
     public AnimeResponse updateAnime(Long id,AnimeRequest animeRequest) throws ResourceNotFoundException;
     public String softDeleteAnime(Long id) throws ResourceNotFoundException;
     public String deleteAnime(Long id) throws ResourceNotFoundException;
+//    public List<Anime> softDeletedAnimes();
+    public List<Anime> findByDeletedByTrue();
+    public List<Anime> searchAnime(String query);
 
 }

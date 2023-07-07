@@ -183,4 +183,19 @@ public class AnimeServiceImpl implements AnimeService {
 //        AnimeResponse animeResponse = AnimeHelper.animeResponseFromAnime(animeRepo.findById(id).get());
         return "Deleted";
     }
+
+//    @Override
+//    public List<Anime> softDeletedAnimes() {
+//         return animeRepo.getAnimeByDeleted(true);
+//    }
+
+    @Override
+    public List<Anime> findByDeletedByTrue() {
+        return animeRepo.findByDeletedByTrue();
+    }
+
+    @Override
+    public List<Anime> searchAnime(String query) {
+        return animeRepo.searchAnimeByName(query);
+    }
 }

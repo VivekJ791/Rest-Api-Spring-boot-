@@ -3,6 +3,7 @@ package com.example.pattern.controller;
 import com.example.pattern.exception.ResourceNotFoundException;
 import com.example.pattern.request.AnimeRequest;
 import com.example.pattern.response.AnimeResponse;
+import com.example.pattern.model.Anime;
 import com.example.pattern.service.impl.AnimeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,6 +86,16 @@ public class AnimeController {
         }
     }
 
-
-
+//    @GetMapping("/softDeleted")
+//    public ResponseEntity<List<Anime>> getSoftDeletedAnimes(@RequestBody Anime anime){
+//        return new ResponseEntity<>(animeService.softDeletedAnimes(),HttpStatus.OK);
+//    }
+    @GetMapping("/allSoftDeleted")
+    public ResponseEntity<List<Anime>> getSoftDeletedAnimesList(){
+        return new ResponseEntity<>(animeService.findByDeletedByTrue(),HttpStatus.OK);
+    }
+    @GetMapping("/search/{name}")
+    public ResponseEntity<List<Anime>> searchAnime(@PathVariable String name){
+        return new ResponseEntity<>(animeService.searchAnime(name),HttpStatus.OK);
+    }
 }
