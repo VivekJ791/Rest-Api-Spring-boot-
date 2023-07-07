@@ -16,10 +16,10 @@ public class AnimeResponse {
     private Float rating;
     private String genre;
     private boolean isDeleted = false;
-    LocalDateTime createdOn;
-    LocalDateTime updatedOn;
-    Boolean deleted = false;
-    Boolean active = true;
-    Long createdBy;
-    Long updatedBy;
+//    LocalDateTime createdOn;
+//    LocalDateTime updatedOn;
+//    Boolean deleted = false;
+//    Boolean active = true;
+//    Long createdBy;
+//    Long updatedBy;
 }

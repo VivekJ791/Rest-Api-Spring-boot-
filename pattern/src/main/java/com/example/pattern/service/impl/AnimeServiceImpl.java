@@ -7,18 +7,20 @@ import com.example.pattern.repo.AnimeRepo;
 import com.example.pattern.request.AnimeRequest;
 import com.example.pattern.response.AnimeResponse;
 import com.example.pattern.service.AnimeService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.transaction.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.hibernate.loader.internal.AliasConstantsHelper.get;
 
 @Service
 public class AnimeServiceImpl implements AnimeService {
@@ -34,17 +36,18 @@ public class AnimeServiceImpl implements AnimeService {
         Anime anime= new Anime();
         if(animeRequest.getId()!=null){
             anime= this.animeRepo.findById(animeRequest.getId()).orElseThrow(()-> new ResourceNotFoundException("anime","id",animeRequest.getId()));
-            anime.setUpdatedBy(animeRequest.getUpdatedBy());
-            anime.setCreatedOn(anime.getCreatedOn());
+//            anime.setUpdatedBy(animeRequest.getUpdatedBy());
+//            anime.setCreatedOn(anime.getCreatedOn());
         }
         anime.setName(animeRequest.getName());
         anime.setGenre(animeRequest.getGenre());
         anime.setRating(animeRequest.getRating());
 //        anime.setCreatedOn(animeRequest.getCreatedOn());
-        anime.setUpdatedOn(animeRequest.getUpdatedOn());
-        anime.setDeleted(animeRequest.getDeleted());
-        anime.setActive(animeRequest.getActive());
-        anime.setCreatedBy(animeRequest.getCreatedBy());
+//        anime.setUpdatedOn(animeRequest.getUpdatedOn());
+//        anime.setDeleted(animeRequest.getDeleted());
+ //       anime.setActive(animeRequest.getActive());
+   //     anime.setCreatedBy(animeRequest.getCreatedBy());
+
         animeRepo.save(anime);
 
        return AnimeHelper.animeResponseFromAnime(anime);
@@ -81,7 +84,7 @@ public class AnimeServiceImpl implements AnimeService {
         criteriaQuery.where(criteriaBuilder.equal(root.get("id"), id));
         TypedQuery<Anime> query = entityManager.createQuery(criteriaQuery);
         List<Anime> resultList = query.getResultList();
-        return resultList.stream().map(AnimeHelper::animeResponseFromAnime).toList().get(0);
+        return resultList.stream().map(AnimeHelper::animeResponseFromAnime).collect(Collectors.toList()).get(0);
     }
 //    Note – same way we can retrieve the entity on basis of othere filed. for example we can retrive can entity on basis of name.
 //
@@ -157,12 +160,12 @@ public class AnimeServiceImpl implements AnimeService {
         animeToUpdate.setGenre(animeRequest.getGenre());
         animeToUpdate.setName(animeRequest.getName());
         animeToUpdate.setRating(animeRequest.getRating());
-        animeToUpdate.setActive(animeRequest.getActive());
-        animeToUpdate.setUpdatedBy(animeRequest.getUpdatedBy());
-        animeToUpdate.setCreatedOn(animeRequest.getCreatedOn());
-        animeToUpdate.setDeleted(animeRequest.getDeleted());
-        animeToUpdate.setCreatedBy(animeRequest.getCreatedBy());
-        animeToUpdate.setUpdatedOn(animeRequest.getUpdatedOn());
+//        animeToUpdate.setActive(animeRequest.getActive());
+//        animeToUpdate.setUpdatedBy(animeRequest.getUpdatedBy());
+//        animeToUpdate.setCreatedOn(animeRequest.getCreatedOn());
+//        animeToUpdate.setDeleted(animeRequest.getDeleted());
+//        animeToUpdate.setCreatedBy(animeRequest.getCreatedBy());
+//        animeToUpdate.setUpdatedOn(animeRequest.getUpdatedOn());
         animeRepo.save(animeToUpdate);
         return AnimeHelper.animeResponseFromAnime(animeToUpdate);
     }

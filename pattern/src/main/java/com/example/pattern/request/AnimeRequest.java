@@ -1,9 +1,9 @@
 package com.example.pattern.request;
 
-import jakarta.persistence.Access;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import javax.persistence.Access;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -20,10 +20,10 @@ public class AnimeRequest {
     Float rating;
     String genre;
     boolean isDeleted = false;
-    LocalDateTime createdOn;
-    LocalDateTime updatedOn;
-    Boolean deleted = false;
-    Boolean active = true;
-    Long createdBy;
-    Long updatedBy;
+//    LocalDateTime createdOn;
+//    LocalDateTime updatedOn;
+//    Boolean deleted = false;
+//    Boolean active = true;
+//    Long createdBy;
+//    Long updatedBy;
 }

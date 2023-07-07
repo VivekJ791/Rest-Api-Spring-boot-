@@ -15,8 +15,8 @@ public class AnimeHelper {
     }
     // Get AnimeRequest from Anime
     public static AnimeResponse animeResponseFromAnime(Anime anime){
-        AnimeResponse animeResponse= new AnimeResponse(anime.getId(),
-                anime.getName(),anime.getRating(),anime.getGenre(),anime.isDeleted(),anime.getCreatedOn(),anime.getUpdatedOn(),anime.getDeleted(),anime.getActive(),anime.getCreatedBy(),anime.getUpdatedBy());
+        AnimeResponse animeResponse= new AnimeResponse(anime.getId(),anime.getName(),anime.getRating(),anime.getGenre(),anime.isDeleted());
+        // anime.getCreatedOn(),anime.getUpdatedOn(),anime.getDeleted(),anime.getActive(),anime.getCreatedBy(),anime.getUpdatedBy()
         return animeResponse;
     }
 }

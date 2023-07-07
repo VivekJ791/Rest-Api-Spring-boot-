@@ -2,7 +2,7 @@ package com.example.pattern.model;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,11 +24,11 @@ public class BaseEntity {
 //	Long id;
 
     @Column (name="created_on")
-    @Temporal (TemporalType.TIMESTAMP)
+//    @Temporal (TemporalType.TIMESTAMP)
     LocalDateTime createdOn;
 
     @Column (name="updated_on")
-    @Temporal(TemporalType.TIMESTAMP)    //by default temporal type= timestamp
+  //  @Temporal(TemporalType.TIMESTAMP)    //by default temporal type= timestamp
     LocalDateTime updatedOn;
 
     @Column (name="deleted")
