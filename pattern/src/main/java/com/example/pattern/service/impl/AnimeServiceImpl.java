@@ -7,6 +7,16 @@ import com.example.pattern.repo.AnimeRepo;
 import com.example.pattern.request.AnimeRequest;
 import com.example.pattern.response.AnimeResponse;
 import com.example.pattern.service.AnimeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,13 +24,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.hibernate.loader.internal.AliasConstantsHelper.get;
 
 @Service
 public class AnimeServiceImpl implements AnimeService {
@@ -33,9 +39,9 @@ public class AnimeServiceImpl implements AnimeService {
     @Override
     public AnimeResponse addAnime(AnimeRequest animeRequest) throws ResourceNotFoundException {
 
-        Anime anime= new Anime();
-        if(animeRequest.getId()!=null){
-            anime= this.animeRepo.findById(animeRequest.getId()).orElseThrow(()-> new ResourceNotFoundException("anime","id",animeRequest.getId()));
+        Anime anime = new Anime();
+        if (animeRequest.getId() != null) {
+            anime = this.animeRepo.findById(animeRequest.getId()).orElseThrow(() -> new ResourceNotFoundException("anime", "id", animeRequest.getId()));
 //            anime.setUpdatedBy(animeRequest.getUpdatedBy());
 //            anime.setCreatedOn(anime.getCreatedOn());
         }
@@ -45,41 +51,63 @@ public class AnimeServiceImpl implements AnimeService {
 //        anime.setCreatedOn(animeRequest.getCreatedOn());
 //        anime.setUpdatedOn(animeRequest.getUpdatedOn());
 //        anime.setDeleted(animeRequest.getDeleted());
- //       anime.setActive(animeRequest.getActive());
-   //     anime.setCreatedBy(animeRequest.getCreatedBy());
+        //       anime.setActive(animeRequest.getActive());
+        //     anime.setCreatedBy(animeRequest.getCreatedBy());
 
         animeRepo.save(anime);
 
-       return AnimeHelper.animeResponseFromAnime(anime);
+        return AnimeHelper.animeResponseFromAnime(anime);
     }
 
     @Override
     public List<AnimeResponse> getAllAnimes() {
-        List<AnimeResponse> animeResponses= new ArrayList<>();
+        int pageNum = 5;
+        int pageSize = 0;
+        List<AnimeResponse> animeResponses = new ArrayList<>();
+        PageRequest page = PageRequest.of(pageNum, pageSize);
+        Page<Anime> pages = animeRepo.findAll(page);
+        List<Anime> content = pages.getContent();
+        return content.stream().map(AnimeHelper::animeResponseFromAnime).collect(Collectors.toList());
+/*        for (Anime a:content) {
+            animeResponses.add(AnimeHelper.animeResponseFromAnime(a));
+        }
         List<Anime> all = animeRepo.findAll();
         for (Anime a: all) {
             animeResponses.add(AnimeHelper.animeResponseFromAnime(a));
         }
-        return animeResponses;
+        return animeResponses;*/
     }
 
-//criteria builders
+    @Override
+    public AnimeResponse getAnimeById(Long id) throws ResourceNotFoundException {
+        Anime anime = animeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("anime", "id", id));
+        return AnimeHelper.animeResponseFromAnime(anime);
+    }
+// Another example of pagintion in spring boot rest api
+
+    public Page<Anime> allAnimes(int pageNum, int pageSize, String sortField, Sort.Direction sortDirection) {
+        Sort sort = Sort.by(sortDirection, sortField);
+        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
+        return animeRepo.findAll(pageable);
+    }
+    //criteria builders
     @Transactional
     @Override
     public List<AnimeResponse> getAnime() {
-        CriteriaBuilder criteriaBuilder= entityManager.getCriteriaBuilder();
-        CriteriaQuery<Anime> criteriaQuery= criteriaBuilder.createQuery(Anime.class);
-        Root<Anime> animeRoot= criteriaQuery.from(Anime.class);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Anime> criteriaQuery = criteriaBuilder.createQuery(Anime.class);
+        Root<Anime> animeRoot = criteriaQuery.from(Anime.class);
         criteriaQuery.orderBy(criteriaBuilder.desc((animeRoot).get("name")));
-        List<Anime> anime=entityManager.createQuery(criteriaQuery).getResultList();
+        List<Anime> anime = entityManager.createQuery(criteriaQuery).getResultList();
         return anime.stream().map(AnimeHelper::animeResponseFromAnime).collect(Collectors.toList());
     }
-//to get a single field by id
+
+    //to get a single field by id
     @Override
     public AnimeResponse getAnimeByIdc(Long id) {
-        CriteriaBuilder criteriaBuilder= entityManager.getCriteriaBuilder();
-        CriteriaQuery<Anime> criteriaQuery= criteriaBuilder.createQuery(Anime.class);
-        Root<Anime> root= criteriaQuery.from(Anime.class);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Anime> criteriaQuery = criteriaBuilder.createQuery(Anime.class);
+        Root<Anime> root = criteriaQuery.from(Anime.class);
         criteriaQuery.select(root);
         criteriaQuery.where(criteriaBuilder.equal(root.get("id"), id));
         TypedQuery<Anime> query = entityManager.createQuery(criteriaQuery);
@@ -90,7 +118,7 @@ public class AnimeServiceImpl implements AnimeService {
 //
 //            criteriaQuery.where(criteriaBuilder.equal(root.get("name"), name ));
 
-//using or in CriteriaBuilder
+    //using or in CriteriaBuilder
     @Override
     public List<AnimeResponse> getByIdOrName(Long id, String name) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -105,11 +133,12 @@ public class AnimeServiceImpl implements AnimeService {
         List<Anime> resultList = query1.getResultList();
         return resultList.stream().map(AnimeHelper::animeResponseFromAnime).collect(Collectors.toList());
     }
-//using and in criteriaBuilder
+
+    //using and in criteriaBuilder
     @Override
     public List<AnimeResponse> getByNameAndRating(String name, Float rating) {
-        CriteriaBuilder criteriaBuilder= entityManager.getCriteriaBuilder();
-        CriteriaQuery<Anime> criteriaQuery= criteriaBuilder.createQuery(Anime.class);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Anime> criteriaQuery = criteriaBuilder.createQuery(Anime.class);
         Root<Anime> root = criteriaQuery.from(Anime.class);
         criteriaQuery.select(root);
         Predicate predicateName = criteriaBuilder.equal(root.get("name"), name);
@@ -125,7 +154,7 @@ public class AnimeServiceImpl implements AnimeService {
     @Override
     public List<AnimeResponse> getIdGreaterThan(Long id) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Anime> criteriaQuery= criteriaBuilder.createQuery(Anime.class);
+        CriteriaQuery<Anime> criteriaQuery = criteriaBuilder.createQuery(Anime.class);
         Root<Anime> root = criteriaQuery.from(Anime.class);
         criteriaQuery.select(root);
         Predicate id1 = criteriaBuilder.gt(root.get("id"), id);
@@ -134,11 +163,12 @@ public class AnimeServiceImpl implements AnimeService {
         List<Anime> resultList = query.getResultList();
         return resultList.stream().map(AnimeHelper::animeResponseFromAnime).collect(Collectors.toList());
     }
-//criteriaBuilder for greater than equal
+
+    //criteriaBuilder for greater than equal
     @Override
     public List<AnimeResponse> getIdGreaterThanEqualTo(Long id) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Anime> criteriaQuery= criteriaBuilder.createQuery(Anime.class);
+        CriteriaQuery<Anime> criteriaQuery = criteriaBuilder.createQuery(Anime.class);
         Root<Anime> root = criteriaQuery.from(Anime.class);
         criteriaQuery.select(root);
         Predicate id1 = criteriaBuilder.ge(root.get("id"), id);
@@ -147,16 +177,17 @@ public class AnimeServiceImpl implements AnimeService {
         List<Anime> resultList = query.getResultList();
         return resultList.stream().map(AnimeHelper::animeResponseFromAnime).collect(Collectors.toList());
     }
+
     @Override
     public AnimeResponse getAnimeById(long id) throws ResourceNotFoundException {
-        Anime anime = animeRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("anime","id",id));
+        Anime anime = animeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("anime", "id", id));
         return AnimeHelper.animeResponseFromAnime(anime);
 
     }
 
     @Override
     public AnimeResponse updateAnime(Long id, AnimeRequest animeRequest) throws ResourceNotFoundException {
-        Anime animeToUpdate= animeRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("anime","id",id));
+        Anime animeToUpdate = animeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("anime", "id", id));
         animeToUpdate.setGenre(animeRequest.getGenre());
         animeToUpdate.setName(animeRequest.getName());
         animeToUpdate.setRating(animeRequest.getRating());
@@ -177,9 +208,10 @@ public class AnimeServiceImpl implements AnimeService {
         animeRepo.save(anime);
         return "soft deleted your record";
     }
+
     @Override
     public String deleteAnime(Long id) throws ResourceNotFoundException {
-        animeRepo.delete(animeRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("anime","id",id)));
+        animeRepo.delete(animeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("anime", "id", id)));
 //        AnimeResponse animeResponse = AnimeHelper.animeResponseFromAnime(animeRepo.findById(id).get());
         return "Deleted";
     }

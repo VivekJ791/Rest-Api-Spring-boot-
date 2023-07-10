@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AnimeResponse {
-    private long id;
+    private Long id;
     private String name;
     private Float rating;
     private String genre;

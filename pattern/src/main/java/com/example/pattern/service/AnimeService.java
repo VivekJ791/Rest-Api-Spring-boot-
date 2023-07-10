@@ -11,6 +11,7 @@ import java.util.List;
 public interface AnimeService {
     public AnimeResponse addAnime(AnimeRequest animeRequest) throws ResourceNotFoundException;
     public List<AnimeResponse> getAllAnimes();
+    public AnimeResponse getAnimeById(Long id) throws ResourceNotFoundException;
     //criteria methods
     public List<AnimeResponse> getAnime();
     public AnimeResponse getAnimeByIdc(Long id);

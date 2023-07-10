@@ -16,7 +16,7 @@ public class Anime
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
     private Float rating;
     private String genre;

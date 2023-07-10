@@ -6,6 +6,8 @@ import com.example.pattern.response.AnimeResponse;
 import com.example.pattern.model.Anime;
 import com.example.pattern.service.impl.AnimeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,21 @@ public class AnimeController {
     public ResponseEntity<List<AnimeResponse>> getAllAnimes() {
         List<AnimeResponse> allAnimes = animeService.getAllAnimes();
         return new ResponseEntity<>(allAnimes, HttpStatus.OK);
+    }
+    @GetMapping("id")
+    public ResponseEntity<AnimeResponse> getAnimeById(@PathVariable Long id) throws ResourceNotFoundException {
+        return new ResponseEntity<>(animeService.getAnimeById(id),HttpStatus.OK);
+    }
+    @GetMapping("/all")
+    public ResponseEntity<Page<Anime>> allAnimes(
+            @RequestParam(defaultValue = "0")int pageNum,
+            @RequestParam(defaultValue = "5")int pageSize,
+            @RequestParam(defaultValue = "id")String sortField,
+            @RequestParam(defaultValue = "ASC") Sort.Direction sortDirection
+    ){
+        Page<Anime> anime = animeService.allAnimes(pageNum, pageSize, sortField, sortDirection);
+        return new ResponseEntity<>(anime,HttpStatus.OK);
+//            return ResponseEntity.ok(anime);
     }
 
     @GetMapping("/criteria")
