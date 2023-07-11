@@ -5,6 +5,7 @@ import com.example.pattern.request.AnimeRequest;
 import com.example.pattern.response.AnimeResponse;
 import com.example.pattern.model.Anime;
 import com.example.pattern.service.impl.AnimeServiceImpl;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/anime")
@@ -36,16 +38,19 @@ public class AnimeController {
         return new ResponseEntity<>(animeService.getAnimeById(id),HttpStatus.OK);
     }
     @GetMapping("/all")
-    public ResponseEntity<Page<Anime>> allAnimes(
+    public ResponseEntity<Map<String,Object>> allAnimes(
             @RequestParam(defaultValue = "0")int pageNum,
             @RequestParam(defaultValue = "5")int pageSize,
             @RequestParam(defaultValue = "id")String sortField,
             @RequestParam(defaultValue = "ASC") Sort.Direction sortDirection
     ){
-        Page<Anime> anime = animeService.allAnimes(pageNum, pageSize, sortField, sortDirection);
-        return new ResponseEntity<>(anime,HttpStatus.OK);
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection.toString().toUpperCase());
+       animeService.allAnimes(pageNum, pageSize, sortField, sortDirection);
+        return new ResponseEntity<>(animeService.allAnimes(pageNum, pageSize, sortField, sortDirection),HttpStatus.OK);
 //            return ResponseEntity.ok(anime);
     }
+
+    // pagination with sort
 
     @GetMapping("/criteria")
     public ResponseEntity<List<AnimeResponse>> getAnimes() {

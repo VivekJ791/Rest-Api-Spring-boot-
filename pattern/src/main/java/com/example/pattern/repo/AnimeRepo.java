@@ -1,10 +1,14 @@
 package com.example.pattern.repo;
 
 import com.example.pattern.model.Anime;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
 
 import java.util.List;
 
@@ -18,4 +22,8 @@ public interface AnimeRepo extends JpaRepository<Anime,Long> {
 //    @Query(value = "select a from Anime a where isDeleted=:q")   //jpql query
 //    public List<Anime> findByDeleted(@Param("q")String query);
 //    List<Anime> getAnimeByDeleted(boolean deleted);
+    Page<Anime> findByDeleted(Boolean b, Pageable pageable);
+    Page<Anime> findByNameContaining(String name, Pageable pageable);
+    List<Anime> findByNameContaining(String name, Sort sort);
+
 }

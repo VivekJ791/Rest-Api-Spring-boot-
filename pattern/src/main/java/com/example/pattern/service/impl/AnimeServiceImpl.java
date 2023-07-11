@@ -10,6 +10,7 @@ import com.example.pattern.service.AnimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,10 +88,18 @@ public class AnimeServiceImpl implements AnimeService {
     }
 // Another example of pagintion in spring boot rest api
 
-    public Page<Anime> allAnimes(int pageNum, int pageSize, String sortField, Sort.Direction sortDirection) {
+    public Map<String,Object> allAnimes(int pageNum, int pageSize, String sortField, Sort.Direction sortDirection) {
         Sort sort = Sort.by(sortDirection, sortField);
-        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
-        return animeRepo.findAll(pageable);
+        Pageable pageable = PageRequest.of(pageNum, pageSize, sort);
+        Page<Anime> list=animeRepo.findAll(pageable);
+        List<Anime> content = list.getContent();
+        Map<String,Object> hashmap= new HashMap<String,Object>();
+        hashmap.put("animes:",list);
+        hashmap.put("Total Elements:",list.getTotalElements());
+        hashmap.put("Total Pages:",list.getTotalPages());
+        hashmap.put("Number:",list.getNumber());
+        return hashmap;
+//        return animeRepo.findAll(pageable);
     }
     //criteria builders
     @Transactional
