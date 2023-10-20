@@ -59,6 +59,7 @@ public class AnimeServiceImpl implements AnimeService {
 
         animeRepo.save(anime);
 
+        System.out.println("revert on this ");
         return AnimeHelper.animeResponseFromAnime(anime);
     }
 
@@ -94,7 +95,7 @@ public class AnimeServiceImpl implements AnimeService {
         Page<Anime> list=animeRepo.findAll(pageable);
         List<Anime> content = list.getContent();
         Map<String,Object> hashmap= new HashMap<String,Object>();
-        hashmap.put("animes:",list);
+        hashmap.put("animes:",content);
         hashmap.put("Total Elements:",list.getTotalElements());
         hashmap.put("Total Pages:",list.getTotalPages());
         hashmap.put("Number:",list.getNumber());
@@ -202,8 +203,8 @@ public class AnimeServiceImpl implements AnimeService {
         animeToUpdate.setGenre(animeRequest.getGenre());
         animeToUpdate.setName(animeRequest.getName());
         animeToUpdate.setRating(animeRequest.getRating());
-//        animeToUpdate.setActive(animeRequest.getActive());
-//        animeToUpdate.setUpdatedBy(animeRequest.getUpdatedBy());
+//      animeToUpdate.setActive(animeRequest.getActive());
+//      animeToUpdate.setUpdatedBy(animeRequest.getUpdatedBy());
 //        animeToUpdate.setCreatedOn(animeRequest.getCreatedOn());
 //        animeToUpdate.setDeleted(animeRequest.getDeleted());
 //        animeToUpdate.setCreatedBy(animeRequest.getCreatedBy());
